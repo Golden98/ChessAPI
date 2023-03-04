@@ -58,4 +58,16 @@ public class ChessGame {
         }
         this.san = moveList.toSan();
     }
+
+    public boolean doMove(String move) {
+        boolean b = this.getBoard().doMove(move);
+        this.updateSan();
+        return b;
+    }
+
+    public boolean doMove(Move move) {
+        boolean b = this.getBoard().doMove(move);
+        this.updateSan();
+        return b;
+    }
 }

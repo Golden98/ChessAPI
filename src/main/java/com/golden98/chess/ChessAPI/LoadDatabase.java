@@ -15,8 +15,7 @@ public class LoadDatabase {
         return args -> {
             log.info("Preloading " + repository.save(new ChessGame()));
             ChessGame chessGame = new ChessGame();
-            chessGame.getBoard().doMove("e4");
-            chessGame.updateSan();
+            chessGame.doMove("e4");
             log.info("Preloading " + repository.save(chessGame));
         };
     }

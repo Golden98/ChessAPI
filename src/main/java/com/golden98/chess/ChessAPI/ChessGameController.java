@@ -43,13 +43,15 @@ public class ChessGameController {
         return assembler.toModel(chessGame);
     }
 
-    /*
-    @PostMapping("/chess/api/solo/{id}")
-    ResponseEntity<?> move(@PathVariable long id, @RequestBody String move) {
+    
+    @PostMapping("/chess/api/solo/{id}/{move}")
+    ResponseEntity<?> move(@PathVariable long id, @PathVariable String move) {
         // get game from db
         ChessGame chessGame = repository.findById(id).orElseThrow(() -> new ChessGameNotFoundException(id));
-
-        chessGame.doMove(null, false)
+        chessGame.doMove(move);
+        EntityModel<SimpleChessGame> entityModel = assembler.toModel(repository.save(chessGame));
+        return ResponseEntity
+            .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+            .body(entityModel);
     }
-    */
 }
