@@ -40,6 +40,10 @@ public class SimpleChessGame {
         this.fen = board.getFen();
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getSan() {
         return san;
     }

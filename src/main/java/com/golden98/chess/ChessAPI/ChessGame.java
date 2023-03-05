@@ -14,7 +14,7 @@ public class ChessGame {
     private @Id @GeneratedValue long id;
     private String san;
     // do not access this directly, use getBoard()
-    transient Board board;
+    private transient Board board;
 
     ChessGame() {
         this.san = "";
