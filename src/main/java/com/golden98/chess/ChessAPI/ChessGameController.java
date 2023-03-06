@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 // import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +51,7 @@ public class ChessGameController {
     }
 
     
-    @PutMapping("/chess/api/solo/{id}/{move}")
+    @PatchMapping("/chess/api/solo/{id}/{move}")
     ResponseEntity<?> move(@PathVariable long id, @PathVariable String move) {
         // get game from db
         ChessGame chessGame = repository.findById(id).orElseThrow(() -> new ChessGameNotFoundException(id));
@@ -66,8 +67,8 @@ public class ChessGameController {
                 .status(HttpStatus.OK)
                 .body(entityModel);
         } else {
-            // use error defined in rfc7807, TODO add error type to response
-            ResponseEntity<?> responseEntity = ResponseEntity
+            // use error defined in rfc7807, TODO add error type to Problem
+            return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .body(Problem.create()
@@ -75,7 +76,16 @@ public class ChessGameController {
                     .withStatus(HttpStatus.METHOD_NOT_ALLOWED)
                     .withDetail("The Move '" + move + "' is invalid for the board id '" + id + "'")
                     .withInstance(linkTo(methodOn(ChessGameController.class).move(chessGame.getId(), move)).toUri()));
-            return responseEntity;
         }
     }
+
+    @PatchMapping("/chess/api/solo/{id}/ai")
+    ResponseEntity<?> ai(@PathVariable long id) {
+        ChessGame chessGame = repository.findById(id).orElseThrow(() -> new ChessGameNotFoundException(id));
+        GreedyEngine.doBestMove(chessGame);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(assembler.toModel(chessGame));
+    }
+
 }
