@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
@@ -83,9 +82,29 @@ public class ChessGameController {
     ResponseEntity<?> ai(@PathVariable long id) {
         ChessGame chessGame = repository.findById(id).orElseThrow(() -> new ChessGameNotFoundException(id));
         GreedyEngine.doBestMove(chessGame);
+
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(assembler.toModel(chessGame));
+            .body(assembler.toModel(repository.save(chessGame)));
     }
 
+    @PatchMapping("/chess/api/solo/{id}/undo")
+    ResponseEntity<?> undo(@PathVariable long id) {
+        ChessGame chessGame = repository.findById(id).orElseThrow(() -> new ChessGameNotFoundException(id));
+        if (chessGame.getBoard().getBackup().size() == 0) {
+            return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .body(Problem.create()
+                    .withTitle("Method not allowed")
+                    .withStatus(HttpStatus.METHOD_NOT_ALLOWED)
+                    .withDetail("Cannot undo a move when no moves have been played")
+                    .withInstance(linkTo(methodOn(ChessGameController.class).undo(chessGame.getId())).toUri()));   
+        }
+
+        chessGame.undoMove();
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(assembler.toModel(repository.save(chessGame)));
+    }
 }
