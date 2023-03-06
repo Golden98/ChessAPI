@@ -70,4 +70,10 @@ public class ChessGame {
         this.updateSan();
         return b;
     }
+
+    public Move undoMove() {
+        Move move = this.getBoard().undoMove();
+        this.updateSan();
+        return move;
+    }
 }
