@@ -7,9 +7,9 @@ import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveList;
 
-public class GreadyEngine {
+public class GreedyEngine {
     
-    static private int[] pointValues (Board board) {
+    private static int[] pointValues (Board board) {
         String fen = board.getFen();
         fen = fen.substring(0, fen.indexOf(" ")); // remove info about 
         int black = 0;
@@ -39,7 +39,7 @@ public class GreadyEngine {
         return new int[] {white, black};
     }
 
-    static public Move getMove (Board board) {
+    public static Move getMove (Board board) {
         MoveList bestMoves = new MoveList();
         int pointMin = Integer.MAX_VALUE;
         // minimize opponents points
@@ -63,4 +63,7 @@ public class GreadyEngine {
         return bestMoves.get(randomNum);
     }
 
+    public static void doBestMove (ChessGame chessGame) {
+        chessGame.doMove(getMove(chessGame.getBoard()));
+    }
 }
