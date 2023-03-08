@@ -9,6 +9,7 @@ import com.github.bhlangonijr.chesslib.move.MoveList;
 public class SimpleChessGame {
     private long id;
     private String san;
+    private String fen;
     private Integer moveCounter;
     private Integer halfMoveCounter;
     private Boolean mated;
@@ -18,7 +19,7 @@ public class SimpleChessGame {
     private Boolean insuffencientMaterial;
     private Boolean draw;
     private Side sideToMove;
-    private String fen;
+
 
     SimpleChessGame(ChessGame chessGame) {
         this.id = chessGame.getId();
@@ -87,5 +88,4 @@ public class SimpleChessGame {
     public String getFen() {
         return fen;
     }
-
 }

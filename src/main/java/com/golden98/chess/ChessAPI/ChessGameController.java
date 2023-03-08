@@ -25,11 +25,13 @@ public class ChessGameController {
     
     private final ChessGameRepository repository;
     private final ChessGameModelAssembler assembler;
+    private final GreedyEngine greedyEngine;
     // private static final Logger log = LoggerFactory.getLogger(ChessGameController.class);
 
-    ChessGameController(ChessGameRepository repository, ChessGameModelAssembler assembler) {
+    ChessGameController(ChessGameRepository repository, ChessGameModelAssembler assembler, GreedyEngine greedyEngine) {
         this.repository = repository;
         this.assembler = assembler;
+        this.greedyEngine = greedyEngine;
     }
 
     @PostMapping("/chess/api/solo/create")
@@ -81,7 +83,7 @@ public class ChessGameController {
     @PatchMapping("/chess/api/solo/{id}/ai")
     ResponseEntity<?> ai(@PathVariable long id) {
         ChessGame chessGame = repository.findById(id).orElseThrow(() -> new ChessGameNotFoundException(id));
-        GreedyEngine.doBestMove(chessGame);
+        greedyEngine.doBestMove(chessGame);
 
         return ResponseEntity
             .status(HttpStatus.OK)

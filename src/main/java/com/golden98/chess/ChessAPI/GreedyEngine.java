@@ -2,14 +2,17 @@ package com.golden98.chess.ChessAPI;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.stereotype.Component;
+
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveList;
 
+@Component
 public class GreedyEngine {
-    
-    private static int[] pointValues (Board board) {
+
+    private int[] pointValues (Board board) {
         String fen = board.getFen();
         fen = fen.substring(0, fen.indexOf(" ")); // remove info about 
         int black = 0;
@@ -39,7 +42,7 @@ public class GreedyEngine {
         return new int[] {white, black};
     }
 
-    public static Move getMove (Board board) {
+    public Move getMove (Board board) {
         MoveList bestMoves = new MoveList();
         int pointMin = Integer.MAX_VALUE;
         // minimize opponents points
@@ -63,7 +66,7 @@ public class GreedyEngine {
         return bestMoves.get(randomNum);
     }
 
-    public static void doBestMove (ChessGame chessGame) {
-        chessGame.doMove(getMove(chessGame.getBoard()));
+    public void doBestMove (ChessGame chessGame) {
+        chessGame.doMove(this.getMove(chessGame.getBoard()));
     }
 }
